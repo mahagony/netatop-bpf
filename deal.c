@@ -30,7 +30,6 @@ int client_flag;
 
 void deal_process(int fd)
 {
-    struct netpertask npt;
     unsigned long long lookup_key, next_key;
     
 
