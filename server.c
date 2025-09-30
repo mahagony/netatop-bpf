@@ -43,7 +43,8 @@ cleanup_flag(int sig)
 */
 int serv_listen()
 {
-    int            sock_fd, len, err, rval;
+    int            sock_fd, rval;
+    socklen_t      len;
     struct sockaddr_un    un, cli_un;
     char *name = NETATOP_SOCKET;
     
@@ -97,14 +98,14 @@ int serv_listen()
 
 
     struct epoll_event ev, events[1000];
-    int epoll_fd = epoll_create(10000);   /* create an epoll handle */
+    int epoll_fd = epoll_create(1);   /* create an epoll handle; size hint ignored on modern kernels */
     ev.data.fd = sock_fd;   /* set fd associated with the event to be processed */
     ev.events = EPOLLIN;    /* set the type of event to handle */
     epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, &ev); /* register epoll events */
    
     while(! cleanup_and_go)
     {
-        int fd_num = epoll_wait(epoll_fd, events, 10000, 1000);
+        int fd_num = epoll_wait(epoll_fd, events, 1000, 1000);
         for (int i = 0; i < fd_num; i++)
         {
             if (events[i].data.fd == sock_fd) // new client
@@ -168,7 +169,6 @@ int serv_listen()
     unlink(name);
 
 errout:
-    err = errno;
     close(sock_fd);
     close(epoll_fd);
     return(rval);

@@ -15,7 +15,7 @@ VMLINUX := vmlinux/$(ARCH)/vmlinux.h
 # Use our own libbpf API headers and Linux UAPI headers distributed with
 # libbpf to avoid dependency on system-wide headers, which could be missing or
 # outdated
-INCLUDES := -I$(OUTPUT) -I../../libbpf/include/uapi -I$(dir $(VMLINUX))
+INCLUDES := -I$(OUTPUT) -I$(abspath libbpf/include/uapi) -I$(dir $(VMLINUX))
 CFLAGS := -g -Wall
 ALL_LDFLAGS := $(LDFLAGS) $(EXTRA_LDFLAGS)
 
@@ -131,10 +131,10 @@ OBJ1 := $(OUTPUT)/server.o
 OBJ2 := $(OUTPUT)/deal.o
 
 ${OBJ1}: server.c server.h
-	$(CC) -c server.c -o ${OBJ1}
+	$(CC) $(CFLAGS) $(INCLUDES) -c server.c -o ${OBJ1}
 	
-${OBJ2}: deal.c deal.h
-	$(CC) $(INCLUDES) -c deal.c -o ${OBJ2}
+${OBJ2}: deal.c deal.h $(LIBBPF_OBJ) | $(OUTPUT)
+	$(CC) $(CFLAGS) $(INCLUDES) -c deal.c -o ${OBJ2}
 
 # Build application binary
 $(APPS): %: $(OUTPUT)/%.o ${OBJ1} ${OBJ2} $(LIBBPF_OBJ) | $(OUTPUT) 
