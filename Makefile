@@ -134,7 +134,7 @@ ${OBJ1}: server.c server.h
 	$(CC) -c server.c -o ${OBJ1}
 	
 ${OBJ2}: deal.c deal.h
-	$(CC) -c deal.c -o ${OBJ2}
+	$(CC) $(INCLUDES) -c deal.c -o ${OBJ2}
 
 # Build application binary
 $(APPS): %: $(OUTPUT)/%.o ${OBJ1} ${OBJ2} $(LIBBPF_OBJ) | $(OUTPUT) 

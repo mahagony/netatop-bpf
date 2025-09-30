@@ -6,6 +6,7 @@
 #include <sys/sem.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <bpf/bpf.h>
 #include "netatop.h"
 #include "deal.h"
 
